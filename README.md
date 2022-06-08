@@ -139,3 +139,144 @@ Firstly, add method in the Vue app, then bind the method with event.
 
 ## 3. Components
 
+In html:
+
+```html
+<div id="app" v-cloak>
+    <login-form />
+</div>
+```
+
+In js:
+
+> app.component(name, Object)
+
+- name: the name of the component
+- Object: a object with a `template` attribute.
+  - `template`: declare the html of the component.
+  - `data`: stores the data of the component.
+  - `methods`: the methods of the component.
+
+```js
+let app = Vue.createApp({
+    ...
+})
+app.component('login-form', {
+template: `
+            <form @submit.prevent="handleSubmit">
+                <h1>{{ title }}</h1>
+                <input type="email" v-model='email' />
+                <input type="password" v-model='password' />
+                <button type="submit">Log in</button>
+            </form>
+        `,
+data: function () {
+    return {
+    title: "Login Form",
+    email: '',
+    password: '',
+    }
+},
+methods: {
+        handleSubmit() {
+            console.log(`Submit! email is ${this.email}; pwd is ${this.password}`)
+        }
+    }
+})
+app.mount('#app')
+```
+
+> `@submit.prevent` is for preventing the default page refresh.
+
+## 4. Component Props
+
+Use child component in parent component:
+
+```js
+// In parent component, register the child component
+
+app.component('parent', {
+    template: `
+        <child />
+    `,
+    components: ['child']
+})
+
+app.component('child', {
+    template: `...`
+})
+
+```
+
+Pass value from parent component to child component
+
+```js
+// Use props in child component
+// Pass value through attribute
+
+app.component('parent', {
+    template: `
+        <child v-bind:propA="p1" />
+        or
+        <child :propA="p1" />
+    `,
+    components: ['child'],
+    data() {
+        return {
+            p1: "..."
+        }
+    }
+})
+
+app.component('child', {
+    template: `
+        <p>{{ propA }}</p>
+    `,
+    props: ['propA']
+})
+```
+
+Receive value from parent and emit value to parent. Use `computed` and `set()`/`get()`
+
+```js
+app.component('parent', {
+    template: `
+        <child v-bind:propA="p1" v-model='p2' />
+        or
+        <child :propA="p1" v-model='p2' />
+    `,
+    components: ['child'],
+    data() {
+        return {
+            p1: "...",
+            // the value of p2 is passed to child though v-model, 
+            // the attribute is 'modelValue'
+            p2: "..."
+        }
+    }
+})
+app.component('child', {
+    template: `
+        <p>{{ propA }}</p>
+        <input type="text" v-model="inputValue"/>
+    `,
+    // The 'modelValue' here is passed from parent's v-model.
+    props: ['propA', 'modelValue'],
+    computed: {
+        // the name of child's attribute
+        inputValue: {
+            get() {
+                // inputValue can get value from modelValue which is from parent.
+                return this.modelValue
+            },
+            set(value) {
+                this.$emit('update:modelValue', value)
+            }
+        }
+    }
+
+})
+```
+
+## Loops
+
