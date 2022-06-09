@@ -280,3 +280,31 @@ app.component('child', {
 
 ## Loops
 
+**Note:** the `key` attribute of the element is required
+
+```js
+app.component('test', {
+    template: `
+        <ul>
+            <li 
+                v-for="(item, idx) in shoppingList"
+                :key="idx"
+            >
+                {{ item }}
+            </li>
+        </ul>
+    `,
+    data() {
+        return {
+            shoppingList: [
+                'milk',
+                'eggs',
+                'wine',
+            ]
+        }
+    }
+})
+```
+
+# Lifecycle hooks
+
