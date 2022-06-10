@@ -1,139 +1,138 @@
 <!DOCTYPE html>
 <html>
 
-  <head>
-    <title>Vue3 Basics</title>
-    <style>
-      .box {
-        background-color: brown;
-        height: 200px;
-        width: 200px;
-      }
+<head>
+  <title>Vue3 Basics</title>
+  <style>
+    .box {
+      background-color: brown;
+      height: 200px;
+      width: 200px;
+    }
 
-      .box.two {
-        background-color: teal;
-      }
+    .box.two {
+      background-color: teal;
+    }
 
-      .box.three {
-        background-color: orange;
-      }
+    .box.three {
+      background-color: orange;
+    }
 
-      [v-cloak] {
-        display: none;
-      }
+    [v-cloak] {
+      display: none;
+    }
 
-      input {
-        margin: 10px;
-        display: block;
-      }
-    </style>
-  </head>
+    input {
+      margin: 10px;
+      display: block;
+    }
+  </style>
+</head>
 
-  <body>
-    <div id="app" v-cloak>
-      {{ greeting }}
-      <input @keyup.enter="greet(greeting + '!!!')" v-model="greeting" />
+<body>
+  <div id="app" v-cloak>
+    {{ greeting }}
+    <input @keyup.enter="greet(greeting + '!!!')" v-model="greeting" />
 
-      <hr />
-      
-      <login-form />
+    <hr />
+    <login-form />
 
-      <hr />
+    <hr />
 
-      <button @click.right="toggleBox">Toggle Box</button>
-      <box :isVisible="isVisible" />
+    <button @click.right="toggleBox">Toggle Box</button>
+    <div v-if="isVisible" class="box"></div>
+    <div v-else-if="isVisible2" class="box two"></div>
+    <div v-else class="box three"></div>
 
-    </div>
+  </div>
 
-    <script src="https://unpkg.com/vue@next"></script>
-    <script>
-      let app = Vue.createApp({
-        data: function () {
-          return {
-            greeting: "Hello Vue 3",
-            isVisible: false,
-          }
+  <script src="https://unpkg.com/vue@next"></script>
+  <script>
+    let app = Vue.createApp({
+      data: function () {
+        return {
+          greeting: "Hello Vue 3",
+          isVisible: false,
+          isVisible2: false
+        }
+      },
+      methods: {
+        toggleBox() {
+          this.isVisible = !this.isVisible
         },
-        methods: {
-          toggleBox() {
-            this.isVisible = !this.isVisible
-          },
-          greet(greeting) {
-            console.log(greeting)
-          }
-        },
-        components: ['login-form', 'box']
-      })
-
-      app.component('login-form', {
-        template: `
+        greet(greeting) {
+          console.log(greeting)
+        }
+      }
+    })
+    app.component('login-form', {
+      template: `
                     <form @submit.prevent="handleSubmit">
                         <bigheader :title="title" />
-                        <label-input v-model="email" :label='emailLabel' />
-                        <label-input v-model="password" :label='passwordLabel' />
+                        <label-input 
+                          v-for="(input, idx) in inputs"
+                          :key="idx"
+                          v-model="input.value"
+                          :label="input.label"
+                          :type="input.type"
+                        />
                         <button type="submit">Log in</button>
                     </form>
                 `,
-        components: ['label-input', 'bigheader'],
-        data: function () {
-          return {
-            title: "Login Form",
-            email: 'aaaa',
-            password: 'sdfsd',
-            emailLabel: 'Email',
-            passwordLabel: 'Password',
-          }
-        },
-        methods: {
-          handleSubmit() {
-            console.log(`Submit! email is ${this.email}; pwd is ${this.password}`)
-          }
+      components: ['label-input', 'bigheader'],
+      data: function () {
+        return {
+          title: "Login Form",
+          inputs: [
+            {
+              label: "Email",
+              value: "",
+              type: "email"
+            },
+            {
+              label: "Password",
+              value: "",
+              type: "password"
+            }
+          ],
+          email: "",
+          password: "",
         }
-      })
+      },
+      methods: {
+        handleSubmit() {
+          console.log(`Submit! email is ${this.inputs[0].value}; pwd is ${this.inputs[1].value}`)
+        }
+      }
+    })
 
-      app.component('label-input', {
-        template: `
+    app.component('label-input', {
+      template: `
           <label>
             {{ label }}
-            <input type="text" v-model="inputValue" />
+            <input :type="type" v-model="inputValue" />
           </label>
         `,
-        props: ['label', 'modelValue'],
-        computed: {
-          inputValue: {
-            get() {
-              return this.modelValue
-            },
-            set(value) {
-              this.$emit('update:modelValue', value)
-            }
+      props: ['label', 'type', 'modelValue'],
+      computed: {
+        inputValue: {
+          get() {
+            return this.modelValue
+          },
+          set(value) {
+            this.$emit('update:modelValue', value)
           }
         }
-      })
+      }
+    })
 
-      app.component('bigheader', {
-        template: `<h1>{{ title }}</h1>`,
-        props: ['title'],
-      })
+    app.component('bigheader', {
+      template: `<h1>{{ title }}</h1>`,
+      props: ['title'],
 
-      app.component('box', {
-        template: `
-          <div v-if="isVisible" class="box"></div>
-        `,
-        props: ['isVisible'],
-        created() {
-          console.log('box created')
-        },
-        mounted() {
-          console.log('box mounted')
-        },
-        unmounted() {
-          console.log('box unmounted')
-        }
-      })
-
-      app.mount('#app')
-    </script>
-  </body>
+    })
+    app.mount('#app')
+  </script>
+</body>
 
 </html>

@@ -280,6 +280,34 @@ app.component('child', {
 
 ## Loops
 
+**Note:** the `key` attribute of the element is required
+
+```js
+app.component('test', {
+    template: `
+        <ul>
+            <li 
+                v-for="(item, idx) in shoppingList"
+                :key="idx"
+            >
+                {{ item }}
+            </li>
+        </ul>
+    `,
+    data() {
+        return {
+            shoppingList: [
+                'milk',
+                'eggs',
+                'wine',
+            ]
+        }
+    }
+})
+```
+
+## Lifecycle hooks
+
 ![lifecycle](static/lifecycle.svg)
 
 ```js
@@ -296,8 +324,6 @@ app.component('box', {
     },
     unmounted() {
         console.log('box unmounted')
-    }
-})
 ```
 
 When to use ***Lifecycle Hooks***?
@@ -306,3 +332,6 @@ When to use ***Lifecycle Hooks***?
 - API Calls
 - Creating or removing evetns
 - Getting or cleaning data
+
+# APP: Product and cart
+
