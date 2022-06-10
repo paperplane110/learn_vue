@@ -280,3 +280,29 @@ app.component('child', {
 
 ## Loops
 
+![lifecycle](static/lifecycle.svg)
+
+```js
+app.component('box', {
+    template: `
+        <div v-if="isVisible" class="box"></div>
+    `,
+    props: ['isVisible'],
+    created() {
+        console.log('box created')
+    },
+    mounted() {
+        console.log('box mounted')
+    },
+    unmounted() {
+        console.log('box unmounted')
+    }
+})
+```
+
+When to use ***Lifecycle Hooks***?
+
+- *Check if user is authorized
+- API Calls
+- Creating or removing evetns
+- Getting or cleaning data
