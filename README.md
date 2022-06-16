@@ -335,3 +335,56 @@ When to use ***Lifecycle Hooks***?
 
 # APP: Product and cart
 
+## Notes
+
+### How to get the input, and convert it to `Number`?
+
+Use `v-model` to binary-bind dom element and  variables in the Vue app.
+
+```html
+<form>
+    <input type="number" v-model.number="age">
+</form>
+```
+
+```js
+let app = Vue.createApp({
+    data() {
+        return {
+            age: 0,
+        }
+    }
+})
+```
+
+### For some value needs to be computed in the meantime, use `computed`
+
+For example, in shopping apps, the `total cost` should be computed once `cart items` have changed. So we would use `computed` to achieve this feature.
+
+```html
+<p>Total cost: {{totalCost}}</p>
+```
+
+```js
+let app = Vue.createApp({
+    data() {
+        return {
+            cart: [
+                {name: ..., price:..., quantity:...}
+            ]
+        }
+    },
+    computed: {
+        totalCost() {
+            let cost = 0
+            for (let itemInfo in this.cart) {
+                cost += itemInfo.price * itemInfo.quantity
+            }
+            return cost.toFixed(2)
+        }
+    }
+})
+```
+
+> `Number.toFixed(2)` can round the number with 2 decimal
+
